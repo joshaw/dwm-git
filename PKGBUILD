@@ -29,6 +29,7 @@ prepare() {
   cd $_pkgname
   git apply ../../dwm-deck-6.2.diff
   git apply ../../dwm-bar-height-6.2.diff
+  git apply ../../dwm-statuscmd-nosignal-20210402-67d76bd.diff
   cp ../../config.h config.h
 }
 

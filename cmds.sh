@@ -49,14 +49,19 @@ screenshot() {
 
 calendar() {
 	EXPIRE="$((15 * 1000))"
-	HEADER="    $(date '+%a %d %b %Y')"
+	HEADER="$(date '+%a %d %b %Y')"
 	BODY="\n$(cal |
 		sed -e '1d' \
-			-e 's/^/    /' \
 			-e 's/\s*$//' \
+			-e 's/^/ /' \
 			-e 's#\(.....\)$#<i>\1</i>#' \
 			-e "s# \($(date "+%d")\) # <u><i><b>\1</b></i></u> #")"
-	notify-send -i "none" -t "$EXPIRE" "$HEADER" "$BODY"
+	notify-send -t "$EXPIRE" "$HEADER" "$BODY"
+}
+
+status_mpd() {
+	notify-send "MPD Status" "$(mpc current \
+		--format '[Artist: %artist%\nAlbum:  %album%\nTrack:  %track%. %title%]|[File: %file%]')"
 }
 
 CMD="${1:-""}"
@@ -84,6 +89,11 @@ case "$CMD" in
 	vol_up)   amixer --quiet set Master "2%+"; status ;;
 	vol_down) amixer --quiet set Master "2%-"; status ;;
 	vol_mute) amixer --quiet set Master "Toggle"; status ;;
+
+	status-mpd) status_mpd ;;
+	status-vol) notify-send "Master Mixer" "$(amixer sget Master)" ;;
+	status-net) notify-send "Network Status" "$(networkctl --no-legend)" ;;
+	status-date) calendar ;;
 
 	quit) quit_dwm ;;
 esac

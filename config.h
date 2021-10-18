@@ -76,7 +76,15 @@ static const char *volupcmd[] =       { "sh", "/etc/dwm/cmds.sh", "vol_up",     
 static const char *voldowncmd[] =     { "sh", "/etc/dwm/cmds.sh", "vol_down",      NULL };
 static const char *volmutecmd[] =     { "sh", "/etc/dwm/cmds.sh", "vol_mute",      NULL };
 static const char *quitcmd[] =        { "sh", "/etc/dwm/cmds.sh", "quit",          NULL };
-static const char *calendarcmd[] =    { "sh", "/etc/dwm/cmds.sh", "calendar",      NULL };
+
+/* commands spawned when clicking statusbar, the mouse button pressed is exported as BUTTON */
+static const StatusCmd statuscmds[] = {
+	{ "status-date", 1 },
+	{ "status-net", 2 },
+	{ "status-vol", 3 },
+	{ "status-mpd", 4 },
+};
+static const char *statuscmd[] = { "/bin/sh", "/etc/dwm/cmds.sh", NULL, NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -133,8 +141,9 @@ static Button buttons[] = {
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
-	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
-	{ ClkStatusText,        0,              Button1,        spawn,          {.v = calendarcmd } },
+	{ ClkStatusText,        0,              Button1,        spawn,          {.v = statuscmd } },
+	{ ClkStatusText,        0,              Button2,        spawn,          {.v = statuscmd } },
+	{ ClkStatusText,        0,              Button3,        spawn,          {.v = statuscmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
@@ -143,4 +152,3 @@ static Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
-
