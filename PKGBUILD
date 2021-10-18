@@ -1,6 +1,6 @@
 pkgname=dwm-git
 _pkgname=dwm
-pkgver=6.2.r0.gcb3f58a
+pkgver=6.2.r12.ga786211
 pkgrel=1
 pkgdesc="A dynamic window manager for X"
 url="http://dwm.suckless.org"
@@ -9,15 +9,16 @@ license=('MIT')
 options=(zipman)
 depends=('libx11' 'libxinerama' 'libxft')
 makedepends=('git')
-install=dwm.install
 provides=('dwm')
 conflicts=('dwm')
-source=(dwm.desktop
-        "$_pkgname::git+http://git.suckless.org/dwm"
-        config.h)
-md5sums=('939f403a71b6e85261d09fc3412269ee'
+source=("$_pkgname::git+http://git.suckless.org/dwm"
+        config.h
+        status.sh
+        cmds.sh)
+md5sums=('SKIP'
          'SKIP'
-         'SKIP') # so you can customize config.h
+         'SKIP'
+         'SKIP')
 
 pkgver(){
   cd $_pkgname
@@ -26,9 +27,9 @@ pkgver(){
 
 prepare() {
   cd $_pkgname
-  if [[ -f "$srcdir/config.h" ]]; then
-    cp -fv "$srcdir/config.h" config.h
-  fi
+  git apply ../../dwm-deck-6.2.diff
+  git apply ../../dwm-bar-height-6.2.diff
+  cp ../../config.h config.h
 }
 
 build() {
@@ -41,7 +42,13 @@ package() {
   make PREFIX=/usr DESTDIR="$pkgdir" install
   install -m644 -D LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
   install -m644 -D README "$pkgdir/usr/share/doc/$pkgname/README"
-  install -m644 -D ../dwm.desktop "$pkgdir/usr/share/xsessions/dwm.desktop"
+  install -m644 -D README "$pkgdir/usr/share/doc/$pkgname/README"
+
+  install -m755 -d "$pkgdir/etc/dwm"
+  install -m644 -D ../cmds.sh "$pkgdir/etc/dwm/cmds.sh"
+  install -m644 -D ../status.sh "$pkgdir/etc/dwm/status.sh"
+
+  install -m755 -d "$pkgdir/var/log"
 }
 
 # vim:set ts=2 sw=2 et:

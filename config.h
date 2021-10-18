@@ -5,8 +5,9 @@ static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=10" };
-static const char dmenufont[]       = "monospace:size=10";
+static const int user_bh            = 25;        /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
+static const char *fonts[]          = { "Cantarell:size=11" };
+static const char dmenufont[]       = "Cantarell:size=11";
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
@@ -19,49 +20,69 @@ static const char *colors[][3]      = {
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static const char *tags[] = { "1", "2", "3", "4", "5", "6"};
 
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	/* class           instance  title       tags mask isfloating monitor */
+	{ "Firefox",       NULL,     NULL,       1 << 0,   0,         -1 },
+	{  NULL,           NULL,     NULL,       0,        0,         -1 },
 };
 
 /* layout(s) */
 static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
-static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
+static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },    /* first entry is default */
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
+	{ "[]|",      deck }, /* https://dwm.suckless.org/patches/deck/dwm-deck-6.0.diff */
 };
 
 /* key definitions */
-#define MODKEY Mod1Mask
+/* #define MODKEY Mod1Mask - Left Alt */
+#define MODKEY Mod4Mask /* Windows Key */
+#define XF86AudioLowerVolume   0x1008ff11
+#define XF86AudioMute          0x1008ff12
+#define XF86AudioRaiseVolume   0x1008ff13
+#define XF86AudioPlay          0x1008ff14
+#define XF86AudioPause         0x1008ff31
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
 	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
 
-/* helper for spawning shell commands in the pre dwm-5.0 fashion */
-#define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
-
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "st", NULL };
+
+static const char *dmenucmd[] =       { "sh", "/etc/dwm/cmds.sh", "dmenu_run",     NULL };
+static const char *termcmd[] =        { "sh", "/etc/dwm/cmds.sh", "terminal",      NULL };
+static const char *lockcmd[] =        { "sh", "/etc/dwm/cmds.sh", "lock",          NULL };
+static const char *sshotcmd[] =       { "sh", "/etc/dwm/cmds.sh", "screenshot",    NULL };
+static const char *passwordcmd[] =    { "sh", "/etc/dwm/cmds.sh", "password",      NULL };
+static const char *audio_pausecmd[] = { "sh", "/etc/dwm/cmds.sh", "audio_pause",   NULL };
+static const char *audio_nextcmd[] =  { "sh", "/etc/dwm/cmds.sh", "audio_next",    NULL };
+static const char *audio_prevcmd[] =  { "sh", "/etc/dwm/cmds.sh", "audio_prev",    NULL };
+static const char *audio_info[] =     { "sh", "/etc/dwm/cmds.sh", "audio_info",    NULL };
+static const char *volupcmd[] =       { "sh", "/etc/dwm/cmds.sh", "vol_up",        NULL };
+static const char *voldowncmd[] =     { "sh", "/etc/dwm/cmds.sh", "vol_down",      NULL };
+static const char *volmutecmd[] =     { "sh", "/etc/dwm/cmds.sh", "vol_mute",      NULL };
+static const char *quitcmd[] =        { "sh", "/etc/dwm/cmds.sh", "quit",          NULL };
+static const char *calendarcmd[] =    { "sh", "/etc/dwm/cmds.sh", "calendar",      NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
+	{ MODKEY|ShiftMask,             XK_l,      spawn,          {.v = lockcmd } },
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_s,      spawn,          {.v = sshotcmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
@@ -76,6 +97,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                       XK_c,      setlayout,      {.v = &layouts[3]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
@@ -84,16 +106,24 @@ static Key keys[] = {
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+	{ MODKEY|ShiftMask,         XK_apostrophe, spawn,          {.v = passwordcmd } },
+	{ MODKEY,                       XK_F7,     spawn,          {.v = audio_prevcmd } },
+	{ MODKEY,                       XK_F8,     spawn,          {.v = audio_pausecmd } },
+	{ MODKEY,                       XK_F9,     spawn,          {.v = audio_nextcmd } },
+	{ 0,                        XF86AudioPlay, spawn,          {.v = audio_pausecmd } },
+	{ 0,                       XF86AudioPause, spawn,          {.v = audio_pausecmd } },
+	{ MODKEY,                 XK_bracketright, spawn,          {.v = audio_info } },
+	{ 0,                        XF86AudioMute, spawn,          {.v = volmutecmd } },
+	{ 0,                 XF86AudioRaiseVolume, spawn,          {.v = volupcmd } },
+	{ 0,                 XF86AudioLowerVolume, spawn,          {.v = voldowncmd } },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
 	TAGKEYS(                        XK_4,                      3)
 	TAGKEYS(                        XK_5,                      4)
 	TAGKEYS(                        XK_6,                      5)
-	TAGKEYS(                        XK_7,                      6)
-	TAGKEYS(                        XK_8,                      7)
-	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ MODKEY|ControlMask|ShiftMask, XK_q,      spawn,          {.v = quitcmd } },
+	//{ MODKEY|ControlMask|ShiftMask, XK_q,      quit,           {0} },
 };
 
 /* button definitions */
@@ -104,6 +134,7 @@ static Button buttons[] = {
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
+	{ ClkStatusText,        0,              Button1,        spawn,          {.v = calendarcmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
