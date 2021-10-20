@@ -17,7 +17,15 @@ MPD_STATUS="$(mpc status 2> /dev/null | awk '
 	}
 ')"
 
-VOLUME="$(amixer -M sget Master | awk '{ match($0, /\[([0-9]+%)\]/, a) } END { print(a[1]) }')"
+VOLUME="$(amixer -M sget Master | awk '
+	/%]/ {
+		match($0, /\[([0-9]+%)\]/, a)
+		if ($NF == "[off]")
+			print("mute")
+		else
+			print(a[1])
+		exit
+	}')"
 
 NETDEVS="$(networkctl list --json=pretty |
 	jq --raw-output '[.Interfaces[] | select(.Name != "lo") | .Name] | join("/")'

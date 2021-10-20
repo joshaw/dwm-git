@@ -94,7 +94,7 @@ case "$CMD" in
 	#vol_mute) pactl set-sink-mute "@DEFAULT_SINK@" "toggle" ;;
 	vol_up)   amixer --quiet set Master "2%+"; status ;;
 	vol_down) amixer --quiet set Master "2%-"; status ;;
-	vol_mute) amixer --quiet set Master "Toggle"; status ;;
+	vol_mute) amixer --quiet set Master "toggle"; status ;;
 
 	status-mpd) status_mpd ;;
 	status-vol) notify-send "Master Mixer" "$(amixer sget Master)" ;;
