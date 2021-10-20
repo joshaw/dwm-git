@@ -48,7 +48,7 @@ screenshot() {
 }
 
 calendar() {
-	EXPIRE="$((15 * 1000))"
+	EXPIRE="$((30 * 1000))"
 	HEADER="$(date '+%a %d %b %Y')"
 	BODY="\n$(cal |
 		sed -e '1d' \
