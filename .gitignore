@@ -1,0 +1,4 @@
+/dwm/
+/pkg/
+/src/
+*.pkg.tar.zst
