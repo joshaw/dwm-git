@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-SEP='  ·  '
+SEP='·'
 
 MPD_STATUS="$(mpc status 2> /dev/null | awk '
 	NR==1 { song_name = $0 }
@@ -13,7 +13,7 @@ MPD_STATUS="$(mpc status 2> /dev/null | awk '
 			status = "∥"
 		}
 
-		printf("   %s   %s  %s  %s", status, song_name, $4, $2)
+		printf("%s   %s  %s  %s", status, song_name, $4, $2)
 	}
 ')"
 
@@ -33,7 +33,8 @@ NETDEVS="$(networkctl list --json=pretty |
 
 DATE="$(date "+%a %d %b %I:%M")"
 
-STATUS="$(printf '\x04%s|\x03%s|\x02%s|\x01%s' "$MPD_STATUS" "$VOLUME" "$NETDEVS" "$DATE")"
-STATUS="${STATUS//|/ $SEP }"
+STATUS="$(printf '   \x04%s   |\x03   %s   |\x02   %s   |\x01   %s' \
+	"$MPD_STATUS" "$VOLUME" "$NETDEVS" "$DATE")"
+STATUS="${STATUS//|/$SEP}"
 
 xsetroot -name "$STATUS"

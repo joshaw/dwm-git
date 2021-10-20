@@ -56,18 +56,23 @@ calendar() {
 			-e 's/^/ /' \
 			-e 's#\(.....\)$#<i>\1</i>#' \
 			-e "s# \($(date "+%d")\) # <u><i><b>\1</b></i></u> #")"
-	notify-send -t "$EXPIRE" "$HEADER" "$BODY"
+	notify-send -t "$EXPIRE" "$HEADER" "<tt>$BODY</tt>"
 }
 
 status_mpd() {
-	notify-send "MPD Status" "$(mpc current \
-		--format '[Artist: %artist%\nAlbum:  %album%\nTrack:  %track%. %title%]|[File: %file%]')"
+	HEADER="$(mpc -f "%title%" current)"
+	BODY="$(mpc -f "<small>from</small> %album%\n<small>by</small> %artist%" current)"
+	notify-send "$HEADER" "$BODY"
 }
 
 status_net() {
 	EXPIRE="$((30 * 1000))"
 	BODY="$(networkctl status --lines 0; echo; networkctl --no-legend)"
-	notify-send -t "$EXPIRE" "Network Status" "$BODY"
+	notify-send -t "$EXPIRE" "Network Status" "<tt>$BODY</tt>"
+}
+
+status_vol() {
+	notify-send "Master Mixer" "$(amixer sget Master | grep '%')"
 }
 
 CMD="${1:-""}"
@@ -97,7 +102,7 @@ case "$CMD" in
 	vol_mute) amixer --quiet set Master "toggle"; status ;;
 
 	status-mpd) status_mpd ;;
-	status-vol) notify-send "Master Mixer" "$(amixer sget Master)" ;;
+	status-vol) status_vol ;;
 	status-net) status_net ;;
 	status-date) calendar ;;
 
