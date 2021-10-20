@@ -64,6 +64,12 @@ status_mpd() {
 		--format '[Artist: %artist%\nAlbum:  %album%\nTrack:  %track%. %title%]|[File: %file%]')"
 }
 
+status_net() {
+	EXPIRE="$((30 * 1000))"
+	BODY="$(networkctl status --lines 0; echo; networkctl --no-legend)"
+	notify-send -t "$EXPIRE" "Network Status" "$BODY"
+}
+
 CMD="${1:-""}"
 
 log "$CMD"
@@ -92,7 +98,7 @@ case "$CMD" in
 
 	status-mpd) status_mpd ;;
 	status-vol) notify-send "Master Mixer" "$(amixer sget Master)" ;;
-	status-net) notify-send "Network Status" "$(networkctl --no-legend)" ;;
+	status-net) status_net ;;
 	status-date) calendar ;;
 
 	quit) quit_dwm ;;
