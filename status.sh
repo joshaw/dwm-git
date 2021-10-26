@@ -1,9 +1,7 @@
 #!/bin/sh
 set -eu
 
-SEP='·'
-
-MPD_STATUS="$(mpc status 2> /dev/null | awk '
+MPD="$(mpc status 2> /dev/null | awk '
 	NR==1 { song_name = $0 }
 	NR==2 {
 		status = ""
@@ -27,14 +25,23 @@ VOLUME="$(amixer -M sget Master | awk '
 		exit
 	}')"
 
-NETDEVS="$(networkctl list --json=pretty |
-	jq --raw-output '[.Interfaces[] | select(.Name != "lo") | .Name] | join("/")'
+NETDEVS="$(networkctl list --json=short |
+	jq --raw-output '
+		[.Interfaces[] | select(.OperationalState == "routable") | .Name] |
+			join("/")
+	'
 )"
 
-DATE="$(date "+%a %d %b %I:%M")"
+CHIP="coretemp-isa-0000"
+TEMP="$(sensors -j "$CHIP" |
+	jq --raw-output --arg chip "$CHIP" '.[$chip]["Package id 0"].temp1_input')°C"
 
-STATUS="$(printf '   \x04%s   |\x03   %s   |\x02   %s   |\x01   %s' \
-	"$MPD_STATUS" "$VOLUME" "$NETDEVS" "$DATE")"
-STATUS="${STATUS//|/$SEP}"
+read -r min1 min5 min15 _ < /proc/loadavg
+LOAD="$(printf '%s/%s/%s' "$min1" "$min5" "$min15")"
 
-xsetroot -name "$STATUS"
+DATE="$(date '+%a %d %b %I:%M')"
+
+S="$(printf '\6   %s   ·\5   %s   ·\4   %s   ·\3   %s   ·\2   %s   ·\1   %s' \
+            "$MPD"     "$VOLUME"  "$NETDEVS" "$TEMP"    "$LOAD"    "$DATE")"
+
+exec xsetroot -name "$S"
