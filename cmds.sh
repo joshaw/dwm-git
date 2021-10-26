@@ -68,7 +68,7 @@ status_mpd() {
 status_net() {
 	EXPIRE="$((30 * 1000))"
 	BODY="$(networkctl status --lines 0; echo; networkctl --no-legend)"
-	notify-send -t "$EXPIRE" "Network Status" "<tt>$BODY</tt>"
+	notify-send -t "$EXPIRE" "Network Status" "<small><tt>$BODY</tt></small>"
 }
 
 status_vol() {
@@ -86,13 +86,13 @@ case "$CMD" in
 	#terminal) disconnect rxvt-unicode ;;
 	#terminal) disconnect xfce4-terminal ;;
 	terminal) disconnect alacritty ;;
-	password) python3 ~/bin/dmenu-keepassxc.py ;;
+	password) disconnect python3 ~/bin/dmenu-keepassxc.py ;;
 	calendar) calendar ;;
 
 	audio_pause) mpd_cmd toggle ;;
 	audio_next) mpd_cmd next ;;
 	audio_prev) mpd_cmd prev ;;
-	audio_info) python3 ~/bin/dmenu-mpd.py -i ;;
+	audio_info) disconnect python3 ~/bin/dmenu-mpd.py -i ;;
 
 	#vol_up) pactl set-sink-volume "@DEFAULT_SINK@" "+5%" ;;
 	#vol_down) pactl set-sink-volume "@DEFAULT_SINK@" "-5%" ;;
