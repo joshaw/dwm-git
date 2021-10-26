@@ -50,13 +50,13 @@ screenshot() {
 calendar() {
 	EXPIRE="$((30 * 1000))"
 	HEADER="$(date '+%a %d %b %Y')"
-	BODY="\n$(cal |
+	BODY="$(cal --color=always |
 		sed -e '1d' \
-			-e 's/\s*$//' \
-			-e 's/^/ /' \
+			-e '/^\s*$/d' \
 			-e 's#\(.....\)$#<i>\1</i>#' \
-			-e "s# \($(date "+%d")\) # <u><i><b>\1</b></i></u> #")"
-	notify-send -t "$EXPIRE" "$HEADER" "<tt>$BODY</tt>"
+			-e 's#'$(printf '\033\[7m')'#<u><i><b>#' \
+			-e 's#'$(printf '\033\[27m')'#</b></i></u>#')"
+	notify-send -t "$EXPIRE" "$HEADER" "<small><tt>$BODY</tt></small>"
 }
 
 status_mpd() {
