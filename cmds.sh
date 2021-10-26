@@ -101,10 +101,10 @@ case "$CMD" in
 	vol_down) amixer --quiet set Master "2%-"; status ;;
 	vol_mute) amixer --quiet set Master "toggle"; status ;;
 
-	status-mpd) status_mpd ;;
-	status-vol) status_vol ;;
-	status-net) status_net ;;
-	status-date) calendar ;;
+	status-6) status_mpd ;;
+	status-5) status_vol ;;
+	status-4) status_net ;;
+	status-1) calendar ;;
 
 	quit) quit_dwm ;;
 esac

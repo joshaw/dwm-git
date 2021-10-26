@@ -79,10 +79,14 @@ static const char *quitcmd[] =        { "sh", "/etc/dwm/cmds.sh", "quit",       
 
 /* commands spawned when clicking statusbar, the mouse button pressed is exported as BUTTON */
 static const StatusCmd statuscmds[] = {
-	{ "status-date", 1 },
-	{ "status-net", 2 },
-	{ "status-vol", 3 },
-	{ "status-mpd", 4 },
+	{ "status-1", 1 },
+	{ "status-2", 2 },
+	{ "status-3", 3 },
+	{ "status-4", 4 },
+	{ "status-5", 5 },
+	{ "status-6", 6 },
+	{ "status-7", 7 },
+	{ "status-8", 8 },
 };
 static const char *statuscmd[] = { "/bin/sh", "/etc/dwm/cmds.sh", NULL, NULL };
 
