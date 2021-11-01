@@ -63,19 +63,23 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 
-static const char *dmenucmd[] =       { "sh", "/etc/dwm/cmds.sh", "dmenu_run",     NULL };
-static const char *termcmd[] =        { "sh", "/etc/dwm/cmds.sh", "terminal",      NULL };
-static const char *lockcmd[] =        { "sh", "/etc/dwm/cmds.sh", "lock",          NULL };
-static const char *sshotcmd[] =       { "sh", "/etc/dwm/cmds.sh", "screenshot",    NULL };
-static const char *passwordcmd[] =    { "sh", "/etc/dwm/cmds.sh", "password",      NULL };
-static const char *audio_pausecmd[] = { "sh", "/etc/dwm/cmds.sh", "audio_pause",   NULL };
-static const char *audio_nextcmd[] =  { "sh", "/etc/dwm/cmds.sh", "audio_next",    NULL };
-static const char *audio_prevcmd[] =  { "sh", "/etc/dwm/cmds.sh", "audio_prev",    NULL };
-static const char *audio_info[] =     { "sh", "/etc/dwm/cmds.sh", "audio_info",    NULL };
-static const char *volupcmd[] =       { "sh", "/etc/dwm/cmds.sh", "vol_up",        NULL };
-static const char *voldowncmd[] =     { "sh", "/etc/dwm/cmds.sh", "vol_down",      NULL };
-static const char *volmutecmd[] =     { "sh", "/etc/dwm/cmds.sh", "vol_mute",      NULL };
-static const char *quitcmd[] =        { "sh", "/etc/dwm/cmds.sh", "quit",          NULL };
+#define CMD(X) static const char * X[] = { "/etc/dwm/cmds", #X, NULL };
+CMD(dmenucmd)
+CMD(terminal)
+CMD(lock)
+CMD(screenshot)
+CMD(password)
+CMD(audio_pause)
+CMD(audio_next)
+CMD(audio_prev)
+CMD(audio_info)
+CMD(vol_up)
+CMD(vol_down)
+CMD(vol_mute)
+CMD(quitmenu)
+CMD(notif_del)
+CMD(notif_last)
+CMD(notif_action)
 
 /* commands spawned when clicking statusbar, the mouse button pressed is exported as BUTTON */
 static const StatusCmd statuscmds[] = {
@@ -88,14 +92,14 @@ static const StatusCmd statuscmds[] = {
 	{ "status-7", 7 },
 	{ "status-8", 8 },
 };
-static const char *statuscmd[] = { "/bin/sh", "/etc/dwm/cmds.sh", NULL, NULL };
+static const char *statuscmd[] = { "/etc/dwm/cmds", NULL, NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY|ShiftMask,             XK_l,      spawn,          {.v = lockcmd } },
+	{ MODKEY|ShiftMask,             XK_l,      spawn,          {.v = lock } },
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-	{ MODKEY,                       XK_s,      spawn,          {.v = sshotcmd } },
-	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_s,      spawn,          {.v = screenshot } },
+	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = terminal } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
@@ -112,29 +116,32 @@ static Key keys[] = {
 	{ MODKEY,                       XK_c,      setlayout,      {.v = &layouts[3]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
+	{ MODKEY|ControlMask,           XK_space,  spawn,          {.v = notif_del } },
+	{ MODKEY,                       XK_grave,  spawn,          {.v = notif_last } },
+	{ MODKEY|ShiftMask,             XK_a    ,  spawn,          {.v = notif_action } },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
 	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
-	{ MODKEY|ShiftMask,         XK_apostrophe, spawn,          {.v = passwordcmd } },
-	{ MODKEY,                       XK_F7,     spawn,          {.v = audio_prevcmd } },
-	{ MODKEY,                       XK_F8,     spawn,          {.v = audio_pausecmd } },
-	{ MODKEY,                       XK_F9,     spawn,          {.v = audio_nextcmd } },
-	{ 0,                        XF86AudioPlay, spawn,          {.v = audio_pausecmd } },
-	{ 0,                       XF86AudioPause, spawn,          {.v = audio_pausecmd } },
+	{ MODKEY|ShiftMask,         XK_apostrophe, spawn,          {.v = password } },
+	{ MODKEY,                       XK_F7,     spawn,          {.v = audio_prev } },
+	{ MODKEY,                       XK_F8,     spawn,          {.v = audio_pause } },
+	{ MODKEY,                       XK_F9,     spawn,          {.v = audio_next } },
+	{ 0,                        XF86AudioPlay, spawn,          {.v = audio_pause } },
+	{ 0,                       XF86AudioPause, spawn,          {.v = audio_pause } },
 	{ MODKEY,                 XK_bracketright, spawn,          {.v = audio_info } },
-	{ 0,                        XF86AudioMute, spawn,          {.v = volmutecmd } },
-	{ 0,                 XF86AudioRaiseVolume, spawn,          {.v = volupcmd } },
-	{ 0,                 XF86AudioLowerVolume, spawn,          {.v = voldowncmd } },
+	{ 0,                        XF86AudioMute, spawn,          {.v = vol_mute } },
+	{ 0,                 XF86AudioRaiseVolume, spawn,          {.v = vol_up } },
+	{ 0,                 XF86AudioLowerVolume, spawn,          {.v = vol_down } },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
 	TAGKEYS(                        XK_4,                      3)
 	TAGKEYS(                        XK_5,                      4)
 	TAGKEYS(                        XK_6,                      5)
-	{ MODKEY|ControlMask|ShiftMask, XK_q,      spawn,          {.v = quitcmd } },
+	{ MODKEY|ControlMask|ShiftMask, XK_q,      spawn,          {.v = quitmenu } },
 	//{ MODKEY|ControlMask|ShiftMask, XK_q,      quit,           {0} },
 };
 

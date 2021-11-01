@@ -126,12 +126,12 @@ index b0b3466..eb478a5 100644
 +		if (arg->v == statuscmd) {
 +			for (int i = 0; i < LENGTH(statuscmds); i++) {
 +				if (statuscmdn == statuscmds[i].id) {
-+					statuscmd[2] = statuscmds[i].cmd;
++					statuscmd[1] = statuscmds[i].cmd;
 +					setenv("BUTTON", lastbutton, 1);
 +					break;
 +				}
 +			}
-+			if (!statuscmd[2])
++			if (!statuscmd[1])
 +				exit(EXIT_SUCCESS);
 +		}
  		setsid();

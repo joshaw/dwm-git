@@ -2,7 +2,7 @@
 set -eu
 
 log() {
-	echo "$(date) $*" >> /var/log/dwm/dwm_cmds.log
+	echo "$(date "+%Y-%m-%d %H:%M:%S") $*" >> /var/log/dwm/dwm_cmds.log
 }
 
 disconnect() {
@@ -10,11 +10,10 @@ disconnect() {
 }
 
 status() {
-	sh /etc/dwm/status.sh
+	/etc/dwm/status
 }
 
 quit_dwm() {
-	#printf 'yes\nno\n' | dmenu -f -p "Quit dwm?" | grep -q 'yes' && killall dwm
 	action="$(printf 'Lock\nSuspend\nLogout\nShutdown\n' | dmenu -p "Action")"
 	log "$(echo "$action" | tr 'A-Z' 'a-z')"
 	case "$action" in
@@ -35,10 +34,6 @@ mpd_cmd() {
 }
 
 screenshot() {
-	#fname="$(date "+%Y%m%d-%H%M")"
-	#fullname="$HOME/screenshots/screenshot_$fname.png"
-	#maim -s -m 10 | tee "$fullname" | xclip -selection clipboard -t image/png
-	#[ -s "$fullname" ] || rm -f "$fullname"
 	scrot \
 		--select \
 		--silent \
@@ -71,6 +66,10 @@ status_net() {
 	notify-send -t "$EXPIRE" "Network Status" "<small><tt>$BODY</tt></small>"
 }
 
+status_up() {
+	notify-send "Uptime" "$(uptime --pretty)"
+}
+
 status_vol() {
 	notify-send "Master Mixer" "$(amixer sget Master | grep '%')"
 }
@@ -81,7 +80,7 @@ log "$CMD"
 case "$CMD" in
 	browser) disconnect firefox ;;
 	lock) lock_screen ;;
-	dmenu_run) dmenu_run ;;
+	dmenucmd) dmenu_run ;;
 	screenshot) screenshot ;;
 	#terminal) disconnect rxvt-unicode ;;
 	#terminal) disconnect xfce4-terminal ;;
@@ -94,6 +93,10 @@ case "$CMD" in
 	audio_prev) mpd_cmd prev ;;
 	audio_info) disconnect python3 ~/bin/dmenu-mpd.py -i ;;
 
+	notif_del) dunstctl close ;;
+	notif_last) dunstctl history-pop ;;
+	notif_action) dunstctl context ;;
+
 	#vol_up) pactl set-sink-volume "@DEFAULT_SINK@" "+5%" ;;
 	#vol_down) pactl set-sink-volume "@DEFAULT_SINK@" "-5%" ;;
 	#vol_mute) pactl set-sink-mute "@DEFAULT_SINK@" "toggle" ;;
@@ -101,10 +104,12 @@ case "$CMD" in
 	vol_down) amixer --quiet set Master "2%-"; status ;;
 	vol_mute) amixer --quiet set Master "toggle"; status ;;
 
-	status-6) status_mpd ;;
-	status-5) status_vol ;;
-	status-4) status_net ;;
-	status-1) calendar ;;
+	status-6) status_mpd ; status ;;
+	status-5) status_vol ; status ;;
+	status-4) status_net ; status ;;
+	status-3) status ;;
+	status-2) status_up ; status ;;
+	status-1) calendar ; status ;;
 
-	quit) quit_dwm ;;
+	quitmenu) quit_dwm ;;
 esac

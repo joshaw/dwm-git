@@ -13,8 +13,8 @@ provides=('dwm')
 conflicts=('dwm')
 source=("$_pkgname::git+http://git.suckless.org/dwm"
         config.h
-        status.sh
-        cmds.sh)
+        status
+        cmds)
 md5sums=('SKIP'
          'SKIP'
          'SKIP'
@@ -46,8 +46,8 @@ package() {
   install -m644 -D README "$pkgdir/usr/share/doc/$pkgname/README"
 
   install -m755 -d "$pkgdir/etc/dwm"
-  install -m644 -D ../cmds.sh "$pkgdir/etc/dwm/cmds.sh"
-  install -m644 -D ../status.sh "$pkgdir/etc/dwm/status.sh"
+  install -m655 -D ../cmds "$pkgdir/etc/dwm/cmds"
+  install -m655 -D ../status "$pkgdir/etc/dwm/status"
 
   install -m755 -d "$pkgdir/var/log"
 }
