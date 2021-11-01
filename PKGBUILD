@@ -6,9 +6,9 @@ pkgdesc="A dynamic window manager for X"
 url="http://dwm.suckless.org"
 arch=('i686' 'x86_64')
 license=('MIT')
-options=(zipman)
+options=(!strip zipman)
 depends=('libx11' 'libxinerama' 'libxft')
-makedepends=('git')
+makedepends=('git' 'gcc')
 provides=('dwm')
 conflicts=('dwm')
 source=("$_pkgname::git+http://git.suckless.org/dwm"
@@ -41,9 +41,6 @@ build() {
 package() {
   cd $_pkgname
   make PREFIX=/usr DESTDIR="$pkgdir" install
-  install -m644 -D LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-  install -m644 -D README "$pkgdir/usr/share/doc/$pkgname/README"
-  install -m644 -D README "$pkgdir/usr/share/doc/$pkgname/README"
 
   install -m755 -d "$pkgdir/etc/dwm"
   install -m655 -D ../cmds "$pkgdir/etc/dwm/cmds"
