@@ -14,12 +14,13 @@ status() {
 }
 
 quit_dwm() {
-	action="$(printf 'Lock\nSuspend\nLogout\nShutdown\n' | dmenu -p "Action")"
+	action="$(printf 'Lock\nSuspend\nLogout\nReboot\nShutdown\n' | dmenu -p "Action")"
 	log "$(echo "$action" | tr 'A-Z' 'a-z')"
 	case "$action" in
 		Lock) slock ;;
 		Suspend) systemctl suspend && slock ;;
 		Logout) killall dwm ;;
+		Reboot) systemctl reboot ;;
 		Shutdown) systemctl poweroff ;;
 	esac
 }
