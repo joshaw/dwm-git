@@ -45,8 +45,6 @@ package() {
   install -m755 -d "$pkgdir/etc/dwm"
   install -m655 -D ../cmds "$pkgdir/etc/dwm/cmds"
   install -m655 -D ../status "$pkgdir/etc/dwm/status"
-
-  install -m755 -d "$pkgdir/var/log"
 }
 
 # vim:set ts=2 sw=2 et:

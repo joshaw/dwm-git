@@ -2,7 +2,7 @@
 set -eu
 
 log() {
-	echo "$(date "+%Y-%m-%d %H:%M:%S") $*" >> /var/log/dwm/dwm_cmds.log
+	logger --tag dwm "$*"
 }
 
 disconnect() {
