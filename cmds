@@ -55,6 +55,18 @@ calendar() {
 	notify-send -t "$EXPIRE" "$HEADER" "<small><tt>$BODY</tt></small>"
 }
 
+log_time() {
+	LOG_FILE="$HOME/repos/wiki/times/times.txt"
+	NEW="$(awk '{line=$0} END {
+		if (substr(line, 0, 8) == strftime("%Y%m%d")) {
+			printf(strftime(", %H%M%S"))
+		} else {
+			printf(strftime("\n%Y%m%d, %H%M%S"))
+		}
+	}' "$LOG_FILE")"
+	printf '%s' "$NEW" >> "$LOG_FILE"
+}
+
 status_mpd() {
 	HEADER="$(mpc -f "%title%" current)"
 	BODY="$(mpc -f "<small>from</small> %album%\n<small>by</small> %artist%" current)"
@@ -88,6 +100,7 @@ case "$CMD" in
 	terminal) disconnect alacritty ;;
 	password) disconnect python3 ~/bin/dmenu-keepassxc.py ;;
 	calendar) calendar ;;
+	log_time) log_time ;;
 
 	audio_pause) mpd_cmd toggle ;;
 	audio_next) mpd_cmd next ;;

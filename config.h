@@ -54,6 +54,7 @@ static const Layout layouts[] = {
 #define XF86AudioRaiseVolume   0x1008ff13
 #define XF86AudioPlay          0x1008ff14
 #define XF86AudioPause         0x1008ff31
+#define XF86Calculator         0x1008ff1d
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -80,6 +81,7 @@ CMD(quitmenu)
 CMD(notif_del)
 CMD(notif_last)
 CMD(notif_action)
+CMD(log_time)
 
 /* commands spawned when clicking statusbar, the mouse button pressed is exported as BUTTON */
 static const StatusCmd statuscmds[] = {
@@ -118,7 +120,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY|ControlMask,           XK_space,  spawn,          {.v = notif_del } },
 	{ MODKEY,                       XK_grave,  spawn,          {.v = notif_last } },
-	{ MODKEY|ShiftMask,             XK_a    ,  spawn,          {.v = notif_action } },
+	{ MODKEY|ShiftMask,             XK_a,      spawn,          {.v = notif_action } },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
 	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
@@ -135,6 +137,7 @@ static Key keys[] = {
 	{ 0,                        XF86AudioMute, spawn,          {.v = vol_mute } },
 	{ 0,                 XF86AudioRaiseVolume, spawn,          {.v = vol_up } },
 	{ 0,                 XF86AudioLowerVolume, spawn,          {.v = vol_down } },
+	{ 0,                       XF86Calculator, spawn,          {.v = log_time } },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
