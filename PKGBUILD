@@ -1,7 +1,7 @@
 pkgname=dwm-git
 _pkgname=dwm
 pkgver=6.2.r12.ga786211
-pkgrel=1
+pkgrel=2
 pkgdesc="A dynamic window manager for X"
 url="http://dwm.suckless.org"
 arch=('i686' 'x86_64')
@@ -12,10 +12,18 @@ makedepends=('git' 'gcc')
 provides=('dwm')
 conflicts=('dwm')
 source=("$_pkgname::git+http://git.suckless.org/dwm"
+        dwm-deck-6.2.diff
+        dwm-bar-height-6.2.diff
+        dwm-statuscmd-nosignal-20210402-67d76bd.diff
+        dwm-statusallmons-6.2.diff
         config.h
         status
         cmds)
 md5sums=('SKIP'
+         '0f8f3afce44741b4a017a36523060efe'
+         'f54440d2d8c238a935f59742e7589abc'
+         'ba677b134f454aaa0c36814808d623f3'
+         '17d49ae80b801e646f57701b0c3eff03'
          'SKIP'
          'SKIP'
          'SKIP')
@@ -30,6 +38,7 @@ prepare() {
   git apply ../../dwm-deck-6.2.diff
   git apply ../../dwm-bar-height-6.2.diff
   git apply ../../dwm-statuscmd-nosignal-20210402-67d76bd.diff
+  git apply ../../dwm-statusallmons-6.2.diff
   cp ../../config.h config.h
 }
 
