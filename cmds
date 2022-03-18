@@ -58,11 +58,27 @@ calendar() {
 log_time() {
 	LOG_FILE="$HOME/repos/wiki/times/times.txt"
 	NEW="$(awk '{line=$0} END {
-		if (substr(line, 0, 8) == strftime("%Y%m%d")) {
+		last_date = substr(line, 0, 8)
+		today = strftime("%Y%m%d")
+		if (last_date == today) {
 			printf(strftime(", %H%M%S"))
-		} else {
-			printf(strftime("\n%Y%m%d, %H%M%S"))
+			exit
 		}
+
+		last_time = mktime( \
+			substr(last_date, 0, 4) " " \
+			substr(last_date, 5, 2) " " \
+			substr(last_date, 7, 2) " 00 00 00" \
+		)
+		while (1) {
+			last_time += 60*60*24
+			new_date = strftime("%Y%m%d", last_time)
+			if (new_date == today) {
+				break
+			}
+			printf("\n%s, w     , w     , w     , w     , 1", new_date)
+		}
+		printf(strftime("\n%Y%m%d, %H%M%S"))
 	}' "$LOG_FILE")"
 	printf '%s' "$NEW" >> "$LOG_FILE"
 }
@@ -70,7 +86,8 @@ log_time() {
 status_mpd() {
 	HEADER="$(mpc -f "%title%" current)"
 	BODY="$(mpc -f "<small>from</small> %album%\n<small>by</small> %artist%" current)"
-	notify-send "$HEADER" "$BODY"
+	QUEUE="$(mpc -f "%albumartist% %track% - %title%" playlist)"
+	notify-send "$HEADER" "$BODY<br><br>$QUEUE"
 }
 
 status_net() {
