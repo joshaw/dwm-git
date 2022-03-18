@@ -1,8 +1,13 @@
-#!/usr/bin/lua5.2
+#!/usr/bin/lua
 function split(str, sep)
 	local t={}
 	for s in string.gmatch(str, "([^"..assert(sep).."]+)") do t[#t+1] = s end
 	return t
+end
+
+function clamp(str, len)
+	if #str < len then return str end
+	return string.format("%." .. tostring(len) .. "s…", str)
 end
 
 function os.capture(cmd)
@@ -32,7 +37,12 @@ function mpd()
 	elseif status_line[1] == "[paused]" then
 		status = "∥"
 	end
-	return ("%s   %s's  %s  %s"):format(status, mpd_output[1], status_line[4], status_line[2])
+	return ("%s   %s  %s  %s"):format(
+		status,
+		clamp(mpd_output[1], 80),
+		status_line[4],
+		status_line[2]
+	)
 end
 
 function volume()
