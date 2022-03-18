@@ -3,7 +3,7 @@ index cb1c8f4..a597b84 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -756,7 +756,7 @@ drawbar(Monitor *m)
- 	Client *c;
+ 		return;
  
  	/* draw status first so it can be overdrawn by tags later */
 -	if (m == selmon) { /* status is only drawn on selected monitor */
