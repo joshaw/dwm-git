@@ -18,10 +18,10 @@ quit_dwm() {
 	log "$(echo "$action" | tr 'A-Z' 'a-z')"
 	case "$action" in
 		Lock) slock ;;
-		Suspend) systemctl suspend && slock ;;
+		Suspend) doas /usr/bin/systemctl suspend && slock ;;
 		Logout) killall dwm ;;
-		Reboot) systemctl reboot ;;
-		Shutdown) systemctl poweroff ;;
+		Reboot) doas /usr/bin/systemctl reboot ;;
+		Shutdown) doas /usr/bin/systemctl poweroff ;;
 	esac
 }
 
