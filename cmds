@@ -131,8 +131,8 @@ case "$CMD" in
 	#vol_up) pactl set-sink-volume "@DEFAULT_SINK@" "+5%" ;;
 	#vol_down) pactl set-sink-volume "@DEFAULT_SINK@" "-5%" ;;
 	#vol_mute) pactl set-sink-mute "@DEFAULT_SINK@" "toggle" ;;
-	vol_up)   amixer --quiet set Master "2%+"; status ;;
-	vol_down) amixer --quiet set Master "2%-"; status ;;
+	vol_up)   amixer --quiet set Master "5%+"; status ;;
+	vol_down) amixer --quiet set Master "5%-"; status ;;
 	vol_mute) amixer --quiet set Master "toggle"; status ;;
 
 	status-6) status_mpd ; status ;;
