@@ -1,7 +1,7 @@
 pkgname=dwm-git
 _pkgname=dwm
-pkgver=6.2.r12.ga786211
-pkgrel=2
+pkgver=6.3.r2.gbece862
+pkgrel=1
 pkgdesc="A dynamic window manager for X"
 url="http://dwm.suckless.org"
 arch=('i686' 'x86_64')
@@ -23,7 +23,7 @@ md5sums=('SKIP'
          '0f8f3afce44741b4a017a36523060efe'
          'f54440d2d8c238a935f59742e7589abc'
          'ba677b134f454aaa0c36814808d623f3'
-         '17d49ae80b801e646f57701b0c3eff03'
+         'c45eb8600c0931781032192c50eccec6'
          'SKIP'
          'SKIP'
          'SKIP')
