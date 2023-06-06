@@ -9,34 +9,6 @@ Subject: [PATCH] [statuscmd] Run shell commands based on mouse location and
  dwm.c        | 76 +++++++++++++++++++++++++++++++++++++++++++++++++---
  2 files changed, 81 insertions(+), 5 deletions(-)
 
-diff --git a/config.def.h b/config.def.h
-index 1c0b587..8f88366 100644
---- a/config.def.h
-+++ b/config.def.h
-@@ -59,6 +59,12 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn()
- static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
- static const char *termcmd[]  = { "st", NULL };
- 
-+/* commands spawned when clicking statusbar, the mouse button pressed is exported as BUTTON */
-+static const StatusCmd statuscmds[] = {
-+	{ "notify-send Mouse$BUTTON", 1 },
-+};
-+static const char *statuscmd[] = { "/bin/sh", "-c", NULL, NULL };
-+
- static Key keys[] = {
- 	/* modifier                     key        function        argument */
- 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-@@ -103,7 +109,9 @@ static Button buttons[] = {
- 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
- 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
- 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
--	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
-+	{ ClkStatusText,        0,              Button1,        spawn,          {.v = statuscmd } },
-+	{ ClkStatusText,        0,              Button2,        spawn,          {.v = statuscmd } },
-+	{ ClkStatusText,        0,              Button3,        spawn,          {.v = statuscmd } },
- 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
- 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
- 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
 diff --git a/dwm.c b/dwm.c
 index b0b3466..eb478a5 100644
 --- a/dwm.c
@@ -62,10 +34,10 @@ index b0b3466..eb478a5 100644
 +static char lastbutton[] = "-";
  static int screen;
  static int sw, sh;           /* X display screen geometry width, height */
- static int bh, blw = 0;      /* bar geometry */
+ static int bh;               /* bar height */
 @@ -440,8 +448,27 @@ buttonpress(XEvent *e)
  			arg.ui = 1 << i;
- 		} else if (ev->x < x + blw)
+ 		} else if (ev->x < x + TEXTW(selmon->ltsymbol))
  			click = ClkLtSymbol;
 -		else if (ev->x > selmon->ww - (int)TEXTW(stext))
 +		else if (ev->x > selmon->ww - statusw) {
@@ -135,8 +107,8 @@ index b0b3466..eb478a5 100644
 +				exit(EXIT_SUCCESS);
 +		}
  		setsid();
- 		execvp(((char **)arg->v)[0], (char **)arg->v);
- 		fprintf(stderr, "dwm: execvp %s", ((char **)arg->v)[0]);
+
+ 		sigemptyset(&sa.sa_mask);
 @@ -1990,8 +2043,23 @@ updatesizehints(Client *c)
  void
  updatestatus(void)
@@ -164,4 +136,3 @@ index b0b3466..eb478a5 100644
  
 -- 
 2.31.0
-

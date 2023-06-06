@@ -1,6 +1,6 @@
 pkgname=dwm-git
 _pkgname=dwm
-pkgver=6.3.r2.gbece862
+pkgver=6.4.r5.ge81f17d
 pkgrel=1
 pkgdesc="A dynamic window manager for X"
 url="http://dwm.suckless.org"
@@ -13,17 +13,11 @@ provides=('dwm')
 conflicts=('dwm')
 source=("$_pkgname::git+http://git.suckless.org/dwm"
         dwm-deck-6.2.diff
-        dwm-bar-height-6.2.diff
-        dwm-statuscmd-nosignal-20210402-67d76bd.diff
-        dwm-statusallmons-6.2.diff
-        config.h
-        status
-        cmds)
+        dwm-statuscmd-nosignal.diff
+        dwm-statusallmons-6.4.diff
+        config.h)
 md5sums=('SKIP'
-         '0f8f3afce44741b4a017a36523060efe'
-         'f54440d2d8c238a935f59742e7589abc'
-         'ba677b134f454aaa0c36814808d623f3'
-         'c45eb8600c0931781032192c50eccec6'
+         'SKIP'
          'SKIP'
          'SKIP'
          'SKIP')
@@ -33,12 +27,16 @@ pkgver(){
   git describe --long --tags | sed -E 's/([^-]*-g)/r\1/;s/-/./g'
 }
 
+__log() {
+  echo "About to run command: $*"
+  "$@"
+}
+
 prepare() {
   cd $_pkgname
-  git apply ../../dwm-deck-6.2.diff
-  git apply ../../dwm-bar-height-6.2.diff
-  git apply ../../dwm-statuscmd-nosignal-20210402-67d76bd.diff
-  git apply ../../dwm-statusallmons-6.2.diff
+  __log git apply -v ../../dwm-statuscmd-nosignal.diff
+  __log git apply -v ../../dwm-deck-6.2.diff
+  __log git apply -v ../../dwm-statusallmons-6.4.diff
   cp ../../config.h config.h
 }
 

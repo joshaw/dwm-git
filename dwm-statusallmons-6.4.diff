@@ -1,8 +1,8 @@
 diff --git a/dwm.c b/dwm.c
-index cb1c8f4..a597b84 100644
+index f1d86b2..82661de 100644
 --- a/dwm.c
 +++ b/dwm.c
-@@ -756,7 +756,7 @@ drawbar(Monitor *m)
+@@ -708,7 +708,7 @@ drawbar(Monitor *m)
  		return;
  
  	/* draw status first so it can be overdrawn by tags later */
@@ -11,7 +11,7 @@ index cb1c8f4..a597b84 100644
  		char *text, *s, ch;
  		drw_setscheme(drw, scheme[SchemeNorm]);
  
-@@ -2069,6 +2069,7 @@ updatesizehints(Client *c)
+@@ -2084,6 +2084,7 @@
  void
  updatestatus(void)
  {
@@ -19,13 +19,14 @@ index cb1c8f4..a597b84 100644
  	if (!gettextprop(root, XA_WM_NAME, stext, sizeof(stext))) {
  		strcpy(stext, "dwm-"VERSION);
  		statusw = TEXTW(stext) - lrpad + 2;
-@@ -2086,7 +2087,8 @@ updatestatus(void)
+@@ -2101,7 +2102,8 @@
  		}
  		statusw += TEXTW(text) - lrpad + 2;
  	}
 -	drawbar(selmon);
 +	for(m = mons; m; m = m->next)
-+		drawbar(m);
++		drawbar(selmon);
  }
- 
+
  void
+
