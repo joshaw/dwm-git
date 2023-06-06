@@ -50,10 +50,6 @@ build() {
 package() {
   cd $_pkgname
   make PREFIX=/usr DESTDIR="$pkgdir" install
-
-  install -m755 -d "$pkgdir/etc/dwm"
-  install -m655 -D ../cmds "$pkgdir/etc/dwm/cmds"
-  install -m655 -D ../status "$pkgdir/etc/dwm/status"
 }
 
 # vim:set ts=2 sw=2 et:
