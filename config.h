@@ -47,15 +47,19 @@ static const Layout layouts[] = {
 /* key definitions */
 /* #define MODKEY Mod1Mask - Left Alt */
 #define MODKEY Mod4Mask /* Windows Key */
+
 #define XF86AudioLowerVolume   0x1008ff11
-#define XF86AudioMute          0x1008ff12
-#define XF86AudioRaiseVolume   0x1008ff13
 #define XF86AudioMicMute       0x1008ffb2
-#define XF86AudioPlay          0x1008ff14
+#define XF86AudioMute          0x1008ff12
+#define XF86AudioNext          0x1008ff17
 #define XF86AudioPause         0x1008ff31
+#define XF86AudioPlay          0x1008ff14
+#define XF86AudioPrev          0x1008ff16
+#define XF86AudioRaiseVolume   0x1008ff13
 #define XF86Calculator         0x1008ff1d
 #define XF86MonBrightnessDown  0x1008ff03
 #define XF86MonBrightnessUp    0x1008ff02
+
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -112,7 +116,9 @@ static Key keys[] = {
 	/* modifier                     key        function        argument */
 
 	{ 0,                        XF86AudioMute, spawn,          {.v = vol_mute } },
+	{ 0,                        XF86AudioNext, spawn,          {.v = audio_next } },
 	{ 0,                        XF86AudioPlay, spawn,          {.v = audio_pause } },
+	{ 0,                        XF86AudioPrev, spawn,          {.v = audio_prev } },
 	{ 0,                       XF86AudioPause, spawn,          {.v = audio_pause } },
 	{ 0,                       XF86Calculator, spawn,          {.v = log_time } },
 	{ 0,                     XF86AudioMicMute, spawn,          {.v = vol_mic_mute } },
