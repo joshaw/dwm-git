@@ -25,7 +25,7 @@ index f1d86b2..82661de 100644
  	}
 -	drawbar(selmon);
 +	for(m = mons; m; m = m->next)
-+		drawbar(selmon);
++		drawbar(m);
  }
 
  void
